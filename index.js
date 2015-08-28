@@ -37,7 +37,6 @@ module.exports = function(headers, opts) {
       }
 
       schema = createSchema(cellSchema)
-      stream.push(schema.encode(cells))
 
       return stream.emit('schema', cellSchema, cb) || cb();
     }
