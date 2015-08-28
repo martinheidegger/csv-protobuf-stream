@@ -13,7 +13,7 @@ var createSchema = function(cells) { // hack for fast array -> protobuf enc
   return protobuf(cells)
 }
 
-module.exports = function(headers, opts) {
+module.exports = function(headers, opts, schemaModifier) {
   if (headers && !Array.isArray(headers)) return module.exports(null, headers);
   if (!opts) opts = {}
 
@@ -22,6 +22,9 @@ module.exports = function(headers, opts) {
   var cellSchema = (headers || []).map(function(cell, i) {
     return typeof cell === 'string' ? {type:'bytes', name:cell, tag:i} : cell
   })
+  if (schemaModifier && cellSchema.length) {
+    schemaModifier(cellSchema)
+  }
 
   var schema = cellSchema.length && protobuf(cellSchema)
 
@@ -34,6 +37,9 @@ module.exports = function(headers, opts) {
     if (!schema) {
       for (var i = 0; i < cells.length; i++) {
         cellSchema.push({type:'bytes', name:cells[i].toString(), tag:i})
+      }
+      if (schemaModifier) {
+        schemaModifier(cellSchema)
       }
 
       schema = createSchema(cellSchema)

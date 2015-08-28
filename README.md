@@ -16,3 +16,13 @@ fs.createReadStream('data.csv').pipe(split()).pipe(encoder).on('data', function(
 	console.log('protobuf schema:', encoder.schema);
 })
 ```
+
+## Modify a on-demand schema
+
+Before the schema is processed it is possible to intercept the schema specification to reduce the data-size:
+
+```js
+csvProtobuf(null, null, function schemaModifier(schema) {
+    schema[0].type = 'int32'
+})
+```
